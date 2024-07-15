@@ -7,6 +7,7 @@ import com.xbxxz.demo.entity.Role;
 import com.xbxxz.demo.mapper.FightMapper;
 import com.xbxxz.demo.mapper.RoleMapper;
 import com.xbxxz.demo.service.FightService;
+import com.xbxxz.demo.sim.FightSim;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class FightServiceImpl extends ServiceImpl<FightMapper, Fight> implements
     }
 
     @Override
-    public boolean newFight(Fight fight) {
+    public String newFight(Fight fight, Integer loop) {
         QueryWrapper<Role> attackerQueryWrapper = new QueryWrapper<>();
         attackerQueryWrapper.eq("name", fight.getAttackerName());
         Long i = roleMapper.selectCount(attackerQueryWrapper);
@@ -30,7 +31,7 @@ public class FightServiceImpl extends ServiceImpl<FightMapper, Fight> implements
         defenderQueryWrapper.eq("name", fight.getDefenderName());
         Long j = roleMapper.selectCount(defenderQueryWrapper);
         if (i == 0 || j == 0) {
-            return false;
+            return "";
         }
         if(fight.getAttackerEvaChance()==0){fight.setAttackerEvaChance(0.5);}
         if(fight.getAttackerSprChance()==0){fight.setAttackerSprChance(0.5);}
@@ -39,6 +40,15 @@ public class FightServiceImpl extends ServiceImpl<FightMapper, Fight> implements
         if(fight.getAttackerBenMingLevel()==0){fight.setAttackerBenMingLevel(9);}
         if(fight.getDefenderBenMingLevel()==0){fight.setDefenderBenMingLevel(9);}
         fightMapper.insert(fight);
-        return true;
+        FightSim fightSim = new FightSim(fight, roleMapper);
+        if (loop == null) { loop = 1; }
+        if (loop == 1) {
+            fightSim.SimOnce();
+            return fightSim.showFightMsg() + fightSim.showFinalMsg();
+        }
+        else {
+            fightSim.SimMul(loop);
+            return fightSim.showFightMsg() + fightSim.showFinalMsg();
+        }
     }
 }
