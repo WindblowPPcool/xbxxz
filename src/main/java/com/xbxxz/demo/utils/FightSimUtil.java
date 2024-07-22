@@ -1,4 +1,4 @@
-package com.xbxxz.demo.sim;
+package com.xbxxz.demo.utils;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xbxxz.demo.entity.Fight;
@@ -7,8 +7,9 @@ import com.xbxxz.demo.mapper.RoleMapper;
 import com.xbxxz.demo.entity.BenMing;
 import com.xbxxz.demo.entity.Counter;
 
-public class FightSim {
-    private RoleMapper roleMapper;
+import java.util.Objects;
+
+public class FightSimUtil {
 
     private final Role attacker;                    //人物
     private final Role defender;
@@ -16,13 +17,12 @@ public class FightSim {
     private final BenMing defenderBm;
     private int attackerHp;                         //双方剩余血量
     private int defenderHp;
-    private Counter counter;
-    private Fight fight;
+    private final Counter counter;
+    private final Fight fight;
     private String msg;
     private String info;
 
-    public FightSim(Fight fight, RoleMapper roleMapper) {
-        this.roleMapper = roleMapper;
+    public FightSimUtil(Fight fight, RoleMapper roleMapper) {
         this.fight = fight;
         QueryWrapper<Role> attqueryWrapper = new QueryWrapper<>();
         attqueryWrapper.eq("name", fight.getAttackerName());
@@ -53,11 +53,11 @@ public class FightSim {
         //判断本命是否于本回合开始前触发
         double randomNumber = Math.random();
         benMingSign = randomNumber < this.attackerBm.getProb();
-        msg += benMingSign ? "本命触发！" : "";
         if (benMingSign) {
             counter.setAttackerBmRound(attackerBm.getRound());
             counter.attackerBm();
         }
+        msg += counter.getAttackerBmRound()>0 ? "本命触发！" : "";
         //若当前本命有效
         if (counter.getAttackerBmRound() > 0) {
             counter.attackerBmRound();
@@ -97,20 +97,20 @@ public class FightSim {
         }
         //附加职业伤害
         switch (this.attacker.getOcc()) {
-            case 1:
-                tmp = this.defender.getOcc() == 4 ? this.attacker.getAtk1() * 1.3 - this.defender.getDef1() : this.attacker.getAtk1() - this.defender.getDef1();
+            case "仙":
+                tmp = this.defender.getOcc().equals("释") ? this.attacker.getAtk1() * 1.3 - this.defender.getDef1() : this.attacker.getAtk1() - this.defender.getDef1();
                 break;
-            case 2:
-                tmp = this.defender.getOcc() == 3 ? this.attacker.getAtk2() * 1.3 - this.defender.getDef2() : this.attacker.getAtk2() - this.defender.getDef2();
+            case "魔":
+                tmp = this.defender.getOcc().equals("鬼") ? this.attacker.getAtk2() * 1.3 - this.defender.getDef2() : this.attacker.getAtk2() - this.defender.getDef2();
                 break;
-            case 3:
-                tmp = this.defender.getOcc() == 5 ? this.attacker.getAtk3() * 1.3 - this.defender.getDef3() : this.attacker.getAtk3() - this.defender.getDef3();
+            case "鬼":
+                tmp = this.defender.getOcc().equals("妖") ? this.attacker.getAtk3() * 1.3 - this.defender.getDef3() : this.attacker.getAtk3() - this.defender.getDef3();
                 break;
-            case 4:
-                tmp = this.defender.getOcc() == 2 ? this.attacker.getAtk4() * 1.3 - this.defender.getDef4() : this.attacker.getAtk4() - this.defender.getDef4();
+            case "释":
+                tmp = this.defender.getOcc().equals("魔") ? this.attacker.getAtk4() * 1.3 - this.defender.getDef4() : this.attacker.getAtk4() - this.defender.getDef4();
                 break;
-            case 5:
-                tmp = this.defender.getOcc() == 1 ? this.attacker.getAtk5() * 1.3 - this.defender.getDef5() : this.attacker.getAtk5() - this.defender.getDef5();
+            case "妖":
+                tmp = this.defender.getOcc().equals("仙") ? this.attacker.getAtk5() * 1.3 - this.defender.getDef5() : this.attacker.getAtk5() - this.defender.getDef5();
                 break;
             default:
                 tmp = 0;
@@ -163,11 +163,11 @@ public class FightSim {
         //判断本命是否于本回合开始前触发
         double randomNumber = Math.random();
         benMingSign = randomNumber < this.defenderBm.getProb();
-        msg += benMingSign ? "本命触发！" : "";
         if (benMingSign) {
             counter.setDefenderBmRound(defenderBm.getRound());
             counter.defenderBm();
         }
+        msg += counter.getDefenderBmRound()>0 ? "本命触发！" : "";
         //若当前本命有效
         if (counter.getDefenderBmRound() > 0) {
             counter.defenderBmRound();
@@ -207,20 +207,20 @@ public class FightSim {
         }
         //附加职业伤害
         switch (this.defender.getOcc()) {
-            case 1:
-                tmp = this.attacker.getOcc() == 4 ? this.defender.getAtk1() * 1.3 - this.attacker.getDef1() : this.defender.getAtk1() - this.attacker.getDef1();
+            case "仙":
+                tmp = this.attacker.getOcc().equals("释") ? this.defender.getAtk1() * 1.3 - this.attacker.getDef1() : this.defender.getAtk1() - this.attacker.getDef1();
                 break;
-            case 2:
-                tmp = this.attacker.getOcc() == 3 ? this.defender.getAtk2() * 1.3 - this.attacker.getDef2() : this.defender.getAtk2() - this.attacker.getDef2();
+            case "魔":
+                tmp = this.attacker.getOcc().equals("鬼") ? this.defender.getAtk2() * 1.3 - this.attacker.getDef2() : this.defender.getAtk2() - this.attacker.getDef2();
                 break;
-            case 3:
-                tmp = this.attacker.getOcc() == 5 ? this.defender.getAtk3() * 1.3 - this.attacker.getDef3() : this.defender.getAtk3() - this.attacker.getDef3();
+            case "鬼":
+                tmp = this.attacker.getOcc().equals("妖") ? this.defender.getAtk3() * 1.3 - this.attacker.getDef3() : this.defender.getAtk3() - this.attacker.getDef3();
                 break;
-            case 4:
-                tmp = this.attacker.getOcc() == 2 ? this.defender.getAtk4() * 1.3 - this.attacker.getDef4() : this.defender.getAtk4() - this.attacker.getDef4();
+            case "释":
+                tmp = this.attacker.getOcc().equals("魔") ? this.defender.getAtk4() * 1.3 - this.attacker.getDef4() : this.defender.getAtk4() - this.attacker.getDef4();
                 break;
-            case 5:
-                tmp = this.attacker.getOcc() == 1 ? this.defender.getAtk5() * 1.3 - this.attacker.getDef5() : this.defender.getAtk5() - this.attacker.getDef5();
+            case "妖":
+                tmp = this.attacker.getOcc().equals("仙") ? this.defender.getAtk5() * 1.3 - this.attacker.getDef5() : this.defender.getAtk5() - this.attacker.getDef5();
                 break;
             default:
                 tmp = 0;
@@ -310,7 +310,7 @@ public class FightSim {
     }
 
     public String showFinalMsg() {
-        if (info == "") {
+        if (Objects.equals(info, "")) {
             info += "战后统计：" + "共" + (int) counter.getRoundCount() + "个回合！";
 
             if (this.attackerHp < 0) {

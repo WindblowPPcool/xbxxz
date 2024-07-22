@@ -11,14 +11,18 @@ import lombok.ToString;
 public enum ResponseEnum implements IResponseEnum<Integer, String, ResponseEnum> {
 
     SUCCESS(200, "成功"),
-    ADDROLEFAILD(-201, "角色名已存在"),
-    DELROLEFAILD(-202, "角色名不存在"),
-    ALTROLEFAILD(-203, "角色名不存在"),
-    FINDROLEFAILD(-204, "角色名不存在"),
-    FAILD(500, "失败");
+    NameAlreadyExists(-201, "角色名已存在"),
+    NameDoesNotExists(-202, "角色名不存在"),
+    NameAlterRejected(-203, "不能修改角色名为已存在的角色名"),
+    UserNotExists(-204,"用户名不存在"),
+    PasswordMatchFailed(-205,"密码错误"),
+    UserAlreadyExists(-206,"已注册"),
+    UsernameIsNull(-207,"用户名不能为空"),
 
-    private Integer code;
-    private String message;
+    FAILED(500, "失败");
+
+    private final Integer code;
+    private final String message;
 
     @Override
     public ResponseEnum get() {

@@ -23,7 +23,7 @@ public class Result<T> {
     public static final Integer SUCCESS = ResponseEnum.SUCCESS.getCode();
 
     /** 失败 */
-    public static final Integer FAIL = ResponseEnum.FAILD.getCode();
+    public static final Integer FAIL = ResponseEnum.FAILED.getCode();
 
     private static <T> Result<T> restResult(T data, int code, String message)
     {
@@ -58,7 +58,7 @@ public class Result<T> {
      * 返回 失败结果
      */
     public static <T> Result<T> error() {
-        return restResult(null, FAIL, ResponseEnum.FAILD.getMessage());
+        return restResult(null, FAIL, ResponseEnum.FAILED.getMessage());
     }
 
     public static <T> Result<T> error(String msg) {
@@ -66,7 +66,7 @@ public class Result<T> {
     }
 
     public static <T> Result<T> error(T data) {
-        return restResult(data, FAIL, ResponseEnum.FAILD.getMessage());
+        return restResult(data, FAIL, ResponseEnum.FAILED.getMessage());
     }
 
     public static <T> Result<T> error(T data, String msg) {

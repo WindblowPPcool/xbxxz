@@ -7,15 +7,15 @@ import com.xbxxz.demo.entity.Role;
 import com.xbxxz.demo.mapper.FightMapper;
 import com.xbxxz.demo.mapper.RoleMapper;
 import com.xbxxz.demo.service.FightService;
-import com.xbxxz.demo.sim.FightSim;
+import com.xbxxz.demo.utils.FightSimUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class FightServiceImpl extends ServiceImpl<FightMapper, Fight> implements FightService {
-    private FightMapper fightMapper;
-    private RoleMapper roleMapper;
+    private final FightMapper fightMapper;
+    private final RoleMapper roleMapper;
 
     public FightServiceImpl(FightMapper fightMapper, RoleMapper roleMapper) {
         this.fightMapper = fightMapper;
@@ -25,10 +25,10 @@ public class FightServiceImpl extends ServiceImpl<FightMapper, Fight> implements
     @Override
     public String newFight(Fight fight, Integer loop) {
         QueryWrapper<Role> attackerQueryWrapper = new QueryWrapper<>();
-        attackerQueryWrapper.eq("name", fight.getAttackerName());
+        attackerQueryWrapper.eq("userId",fight.getUserId()).eq("name", fight.getAttackerName());
         Long i = roleMapper.selectCount(attackerQueryWrapper);
         QueryWrapper<Role> defenderQueryWrapper = new QueryWrapper<>();
-        defenderQueryWrapper.eq("name", fight.getDefenderName());
+        defenderQueryWrapper.eq("userId",fight.getUserId()).eq("name", fight.getDefenderName());
         Long j = roleMapper.selectCount(defenderQueryWrapper);
         if (i == 0 || j == 0) {
             return "";
@@ -40,15 +40,15 @@ public class FightServiceImpl extends ServiceImpl<FightMapper, Fight> implements
         if(fight.getAttackerBenMingLevel()==0){fight.setAttackerBenMingLevel(9);}
         if(fight.getDefenderBenMingLevel()==0){fight.setDefenderBenMingLevel(9);}
         fightMapper.insert(fight);
-        FightSim fightSim = new FightSim(fight, roleMapper);
+        FightSimUtil fightSimUtil = new FightSimUtil(fight, roleMapper);
         if (loop == null) { loop = 1; }
         if (loop == 1) {
-            fightSim.SimOnce();
-            return fightSim.showFightMsg() + fightSim.showFinalMsg();
+            fightSimUtil.SimOnce();
+            return fightSimUtil.showFightMsg() + fightSimUtil.showFinalMsg();
         }
         else {
-            fightSim.SimMul(loop);
-            return fightSim.showFightMsg() + fightSim.showFinalMsg();
+            fightSimUtil.SimMul(loop);
+            return fightSimUtil.showFightMsg() + fightSimUtil.showFinalMsg();
         }
     }
 }

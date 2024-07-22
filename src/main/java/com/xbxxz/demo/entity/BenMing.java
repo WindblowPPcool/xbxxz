@@ -15,8 +15,14 @@ public class BenMing {
     青魔=0； 太荒=1； 蚀天=2； 墨魂=3
      */
 
-    public BenMing(int id, int level) {
-        this.id = id;
+    public BenMing(String name, int level) {
+        switch (name) {
+            case "青魔" : this.id = 0;break;
+            case "太荒" : this.id = 1;break;
+            case "蚀天" : this.id = 2;break;
+            case "墨魂" : this.id = 3;break;
+            default : this.id = -1;break;
+        }
         this.level = level;
         switch(id){
             case 0:

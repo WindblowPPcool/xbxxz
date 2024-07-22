@@ -17,16 +17,18 @@ public class Fight implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+    @TableField("userId")
+    private Integer userId;
     @TableField("attackerName")
     private String attackerName;
     @TableField("defenderName")
     private String defenderName;
     @TableField("attackerBenMingId")
-    private int attackerBenMingId;
+    private String attackerBenMingId;
     @TableField("attackerBenMingLevel")
     private int attackerBenMingLevel;
     @TableField("defenderBenMingId")
-    private int defenderBenMingId;
+    private String defenderBenMingId;
     @TableField("defenderBenMingLevel")
     private int defenderBenMingLevel;
     @TableField("attackerSprChance")

@@ -19,6 +19,8 @@ public class Role implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+    @TableField("userId")
+    private Integer userId;
     private String name;
     private int atk;
     private int def;
@@ -36,7 +38,7 @@ public class Role implements Serializable {
     private int def3;
     private int def4;
     private int def5;
-    private int occ;
+    private String occ;
     @TableField("petAtk")
     private int petAtk;
 }

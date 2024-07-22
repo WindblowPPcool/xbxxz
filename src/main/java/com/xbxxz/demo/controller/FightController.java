@@ -20,8 +20,9 @@ public class FightController {
 
     @PostMapping("/new")
     @ApiOperation(value = "新建战斗")
-    public Result newFight(@RequestBody MultiFight multiFight) {
+    public Result<String> newFight(@RequestBody MultiFight multiFight) {
         Fight fight = multiFight.getFight();
+        if (fight.getUserId()==null) {fight.setUserId(0);}
         Integer loop = multiFight.getLoop();
         System.out.println(loop);
         String msg = fightService.newFight(fight, loop);
